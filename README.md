@@ -19,7 +19,7 @@ D1 -> SDA (yellow)
 D2 -> SCL (green)
 ```
 
-![Connection](/Schema.png)
+![Connection](/drawing.png)
 
 ## Development
 This sketch is for following development environment
@@ -63,11 +63,11 @@ Use these settings:
 
 | Name               | Setting                                 |
 |--------------------|-----------------------------------------|
-| Board              | "LOLIN(WEMOS) D1 mini (clone)           |
+| Board              | "LOLIN(WEMOS) D1 mini (clone)"          |
 | Upload Speed:      | "921600"                                |
 | CPU Frequency:     | "80 MHz"                                |
 | Flash Size:        | "4MB(FS:2MB OTA:~1019KB)"               |
-| Flash Mode:        | 'DOUT (compatible)"                     |
+| Flash Mode:        | "DOUT (compatible)"                     |
 | Flash Frequency:   | "40MHz"                                 |
 | Debug port:        | "Disabled"                              |
 | Debug Level:       | "None"                                  |
