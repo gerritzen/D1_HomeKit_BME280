@@ -1,42 +1,24 @@
-
-/*  WEMOS D1 Mini
-                     ______________________________
-                    |   L T L T L T L T L T L T    |
-                    |                              |
-                 RST|                             1|TX HSer
-                  A0|                             3|RX HSer
-                  D0|16                           5|D1
-                  D5|14                           4|D2
-                  D6|12                    10kPUP_0|D3
-RX SSer/HSer swap D7|13                LED_10kPUP_2|D4
-TX SSer/HSer swap D8|15                            |GND
-                 3V3|__                            |5V
-                       |                           |
-                       |___________________________|
-
-D1 mini -> DS18B20
-5V -> VCC (rot)
-GND -> GND (schwarz)
-D4 -> DQ (gelb)
-
-*/
-
 #include <Arduino.h>
 #include <arduino_homekit_server.h>    // https://github.com/Mixiaoxiao/Arduino-HomeKit-ESP8266
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+
 #include "wifi_info.h"
-//include the Arduino library for your real sensor here, e.g. <DHT.h>
-#include <OneWire.h>                   // https://www.arduinolibraries.info/libraries/one-wire
-#include <DallasTemperature.h>         // https://www.arduinolibraries.info/libraries/dallas-temperature
-
-#define ONE_WIRE_BUS 2
-
-OneWire oneWire(ONE_WIRE_BUS);
-DallasTemperature sensors(&oneWire);
 
 #define LOG_D(fmt, ...)   printf_P(PSTR(fmt "\n") , ##__VA_ARGS__);
 
+Adafruit_BME280 bme;
+
 void setup() {
+  Wire.pins(D1, D2); //new SDA SCL pins
   Serial.begin(115200);
+  unsigned status = bme.begin(0x76, &Wire);
+  if (!status) {
+    Serial.println("Could not find BME280 sensor!");
+    for(;;) delay(100);
+  }
+
   wifi_connect(); // in wifi_info.h
   
   // homekit_storage_reset(); // to remove the previous HomeKit pairing storage when you first run this new HomeKit example
@@ -56,6 +38,7 @@ void loop() {
 // access your homekit characteristics defined in my_accessory.c
 extern "C" homekit_server_config_t config;
 extern "C" homekit_characteristic_t cha_current_temperature;
+extern "C" homekit_characteristic_t cha_humidity;
 
 static uint32_t next_heap_millis = 0;
 static uint32_t next_report_millis = 0;
@@ -68,8 +51,8 @@ void my_homekit_loop() {
   arduino_homekit_loop();
   const uint32_t t = millis();
   if (t > next_report_millis) {
-    // report sensor values every 10 seconds
-    next_report_millis = t + 10 * 1000;
+    // report sensor values every 60 seconds
+    next_report_millis = t + 60 * 1000;
     my_homekit_report();
   }
   if (t > next_heap_millis) {
@@ -83,19 +66,14 @@ void my_homekit_loop() {
 
 void my_homekit_report() {
   // Get Temperature
-  sensors.requestTemperatures();
-  float temperature_value = sensors.getTempCByIndex(0); // SETUP read your real sensor here.
+  float temperature_value = bme.readTemperature();
+  float humidity_value = bme.readHumidity();
 
-  if (temperature_value > 99 or temperature_value < -99) {
-    LOG_D("Current temperature %.1f out of range (-100 to 100) set to 0", temperature_value);
-    temperature_value = 0;
-  }
-  
   cha_current_temperature.value.float_value = temperature_value;
+  cha_humidity.value.float_value = humidity_value;
   LOG_D("Current temperature: %.1f", temperature_value);
+  LOG_D("Current humidity: %.1f\%", humidity_value);
   homekit_characteristic_notify(&cha_current_temperature, cha_current_temperature.value);
+  homekit_characteristic_notify(&cha_humidity, cha_humidity.value);
 }
 
-int random_value(int min, int max) {
-  return min + random(max - min);
-}

@@ -1,21 +1,22 @@
 # esp8266-homekit-tempsensor
-This is a native HomeKit temperature sensor with D1 mini ESP8266 and DS18B20 sensor in celsius.
+This is a native HomeKit temperature and humidity sensor with D1 mini ESP8266 and BME280 sensor.
 
 ## Hardware
 The following hardware is required:
 ```
 - D1 mini (ESP8266)
-- Temperature sensor (DS18B20)
+- Temperature and humidity sensor (BME280)
 ```
 
 Connection:
 D1 mini -> DS18B20
 ```
-5V -> VCC (red)
+3V3 -> VCC (red)
 GND -> GND (black)
-D4 -> DQ (yellow)
+D1 -> SDA (yellow)
+D2 -> SCL (green)
 ```
-![alt text](https://github.com/datjan/esp8266-homekit-tempsensor/blob/main/Schema.png?raw=true)
+![alt text](https://github.com/gerritzen/D1_HomeKit_BME280/blob/main/Schema.png?raw=true)
 
 ## Development
 This sketch is for following development environment
@@ -25,9 +26,9 @@ Arduino
 
 Following libraries are required
 ```
-https://github.com/datjan/Arduino-HomeKit-ESP8266 (fork from Mixiaoxiao/Arduino-HomeKit-ESP8266:master)
-https://www.arduinolibraries.info/libraries/one-wire
-https://www.arduinolibraries.info/libraries/dallas-temperature
+https://github.com/Mixiaoxiao/Arduino-HomeKit-ESP8266
+https://github.com/adafruit/Adafruit_Sensor
+https://github.com/adafruit/Adafruit_BME280_Library
 ```
 
 ## Setup
@@ -45,7 +46,7 @@ const char *password = "xxx"; // SETUP Wlan password
 ## Upload to device
 Following files needs to be uploaded to the ESP8266 (D1 mini)
 ```
-esp8266-homekit-tempsensor.ino
+D1_HomeKit_BME280.ino
 my_accessory.c
 wifi_info.h
 ```

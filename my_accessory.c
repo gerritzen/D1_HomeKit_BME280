@@ -1,11 +1,3 @@
-/*
- * my_accessory.c
- * Define the accessory in C language using the Macro in characteristics.h
- *
- *  Created on: 2020-05-15
- *      Author: Mixiaoxiao (Wang Bin)
- */
-
 #include <homekit/homekit.h>
 #include <homekit/characteristics.h>
 
@@ -40,7 +32,7 @@ homekit_characteristic_t cha_name = HOMEKIT_CHARACTERISTIC_(NAME, "Temperature S
 // homekit_characteristic_t cha_status_low_battery = HOMEKIT_CHARACTERISTIC_(STATUS_LOW_BATTERY, 0);
 
 // example for humidity
-// homekit_characteristic_t cha_humidity  = HOMEKIT_CHARACTERISTIC_(CURRENT_RELATIVE_HUMIDITY, 0);
+homekit_characteristic_t cha_humidity  = HOMEKIT_CHARACTERISTIC_(CURRENT_RELATIVE_HUMIDITY, 0);
 
 homekit_accessory_t *accessories[] = {
     HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_sensor, .services=(homekit_service_t*[]) {
@@ -63,12 +55,12 @@ homekit_accessory_t *accessories[] = {
             NULL
         }),
     // Add this HOMEKIT_SERVICE if you has a HUMIDITY_SENSOR together
-    /*
+    
         HOMEKIT_SERVICE(HUMIDITY_SENSOR, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Humidity Sensor"),
             &cha_humidity,
             NULL
-        }),*/
+        }),
         NULL
     }),
     NULL
